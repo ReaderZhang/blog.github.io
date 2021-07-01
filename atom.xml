@@ -1,54 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.github.io</id>
-    <title>Gridea</title>
-    <updated>2021-05-12T05:18:50.762Z</updated>
+    <title>qqz</title>
+    <updated>2021-07-01T06:11:05.980Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://blog.github.io"/>
     <link rel="self" href="https://blog.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
+    <subtitle>&lt;strong&gt;For Alibaba&lt;/strong&gt;</subtitle>
     <logo>https://blog.github.io/images/avatar.png</logo>
     <icon>https://blog.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, Gridea</rights>
+    <rights>All rights reserved 2021, qqz</rights>
     <entry>
-        <title type="html"><![CDATA[test]]></title>
-        <id>https://blog.github.io/post/test/</id>
-        <link href="https://blog.github.io/post/test/">
+        <title type="html"><![CDATA[leetcode算法之动态规划]]></title>
+        <id>https://blog.github.io/post/leetcode-suan-fa-zhi-dong-tai-gui-hua/</id>
+        <link href="https://blog.github.io/post/leetcode-suan-fa-zhi-dong-tai-gui-hua/">
         </link>
-        <updated>2021-05-12T05:18:36.000Z</updated>
-        <content type="html"><![CDATA[<p>test</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://blog.github.io/post/hello-gridea/</id>
-        <link href="https://blog.github.io/post/hello-gridea/">
-        </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
+        <updated>2021-07-01T02:05:31.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="1零钱兑换">1.零钱兑换</h2>
+<p>给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。</p>
+<p>你可以认为每种硬币的数量是无限的。<br>
+<img src="https://blog.github.io/post-images/1625105255152.png" alt="" loading="lazy"></p>
+<ol>
+<li>递归dfs(效率最低)</li>
+</ol>
+<pre><code>class Solution{
+    int res = Integer.MAX_VALUE;
+    public int coinChange(int[] coins,int amount){
+        if(coins.length == 0){
+            return -1;
+        }
+        findWay(coins,amount,0);
+        //如果没有任何一种硬币组合能够组成总金额，则返回-1
+        if(res == Integer.MAX_VALUE){
+            return -1;
+        }
+        return res;
+    }
+    public void findWay(int[] coins,int amount,int count){
+        if(amount &lt; 0){
+            return;
+        }
+        if(amount == 0){
+            res = Math.min(res,count);
+        }
+        for (int i = 0; i &lt; coins.length; i++) {
+            findWay(coins,amount-coins[i],count+1);
+        }
+    }
+}
+</code></pre>
+<ol start="2">
+<li>记忆搜索</li>
+</ol>
+<pre><code>class Solution{
+    int[] memo;
+    public int coinChange(int[] coins,int amount){
+        if(coins.length == 0){
+            return -1;
+        }
+        memo = new int[amount];
+        return findWay(coins,amount);
+    }
+    //memo[n]表示钱币n可以被换取得最少的硬币数，不能换取就为-1
+    //findWay函数的目的就是为了找到amount数量的零钱可以兑换的最少硬币数量，返回其值int
+    public int findWay(int[] coins,int amount){
+        if(amount &lt; 0){
+           return -1;
+        }
+        if(amount == 0){
+            return 0;
+        }
+        //记忆化的处理,若memo[n]赋予了值，就不用继续下面的循环
+        //直接的返回memo[n]的最优值
+        if(memo[amount-1] != 0){
+            return memo[amount-1];
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i &lt; coins.length; i++) {
+            int res = findWay(coins,amount-coins[i]);
+            if(res &gt;= 0 &amp;&amp; res &lt; min){
+                min = res + 1; //加1是为了加上得到res结果的那个步骤，兑换的一个硬币
+            }
+        }
+        memo[amount - 1] = (min == Integer.MAX_VALUE ?-1:min);
+        return memo[amount-1];
+    }
+}
+</code></pre>
+<ol start="3">
+<li>动态规划</li>
+</ol>
+<pre><code>class Solution{
+    public int coinChange(int[] coins,int amount){
+        int max = amount + 1;
+        int[] dp = new int[amount+1];
+        Arrays.fill(dp,max);
+        dp[0] = 0;
+        for (int i = 0; i &lt;= amount; i++) {
+            for(int j = 0;j&lt;coins.length;j++){
+                if(coins[j]&lt;=i){
+                    dp[i] = Math.min(dp[i],dp[i-coins[j]]+1);
+                }
+            }
+        }
+        return dp[amount] &gt; amount? -1:dp[amount];
+    }
+}
+</code></pre>
 ]]></content>
     </entry>
 </feed>

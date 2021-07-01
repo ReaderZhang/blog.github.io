@@ -1,0 +1,258 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>leetcode算法之动态规划 | qqz</title>
+<link rel="shortcut icon" href="https://blog.github.io/favicon.ico?v=1625119852496">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="leetcode算法之动态规划 | qqz - Atom Feed" href="https://blog.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1.零钱兑换
+给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。
+你可以认为每种硬币的数量是无限的。
+
+
+递归dfs(效率最低..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.github.io">
+  <img class="avatar" src="https://blog.github.io/images/avatar.png?v=1625119852496" alt="">
+  </a>
+  <h1 class="site-title">
+    qqz
+  </h1>
+  <p class="site-description">
+    <strong>For Alibaba</strong>
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              leetcode算法之动态规划
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-07-01
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="1零钱兑换">1.零钱兑换</h2>
+<p>给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。</p>
+<p>你可以认为每种硬币的数量是无限的。<br>
+<img src="https://blog.github.io/post-images/1625105255152.png" alt="" loading="lazy"></p>
+<ol>
+<li>递归dfs(效率最低)</li>
+</ol>
+<pre><code>class Solution{
+    int res = Integer.MAX_VALUE;
+    public int coinChange(int[] coins,int amount){
+        if(coins.length == 0){
+            return -1;
+        }
+        findWay(coins,amount,0);
+        //如果没有任何一种硬币组合能够组成总金额，则返回-1
+        if(res == Integer.MAX_VALUE){
+            return -1;
+        }
+        return res;
+    }
+    public void findWay(int[] coins,int amount,int count){
+        if(amount &lt; 0){
+            return;
+        }
+        if(amount == 0){
+            res = Math.min(res,count);
+        }
+        for (int i = 0; i &lt; coins.length; i++) {
+            findWay(coins,amount-coins[i],count+1);
+        }
+    }
+}
+</code></pre>
+<ol start="2">
+<li>记忆搜索</li>
+</ol>
+<pre><code>class Solution{
+    int[] memo;
+    public int coinChange(int[] coins,int amount){
+        if(coins.length == 0){
+            return -1;
+        }
+        memo = new int[amount];
+        return findWay(coins,amount);
+    }
+    //memo[n]表示钱币n可以被换取得最少的硬币数，不能换取就为-1
+    //findWay函数的目的就是为了找到amount数量的零钱可以兑换的最少硬币数量，返回其值int
+    public int findWay(int[] coins,int amount){
+        if(amount &lt; 0){
+           return -1;
+        }
+        if(amount == 0){
+            return 0;
+        }
+        //记忆化的处理,若memo[n]赋予了值，就不用继续下面的循环
+        //直接的返回memo[n]的最优值
+        if(memo[amount-1] != 0){
+            return memo[amount-1];
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i &lt; coins.length; i++) {
+            int res = findWay(coins,amount-coins[i]);
+            if(res &gt;= 0 &amp;&amp; res &lt; min){
+                min = res + 1; //加1是为了加上得到res结果的那个步骤，兑换的一个硬币
+            }
+        }
+        memo[amount - 1] = (min == Integer.MAX_VALUE ?-1:min);
+        return memo[amount-1];
+    }
+}
+</code></pre>
+<ol start="3">
+<li>动态规划</li>
+</ol>
+<pre><code>class Solution{
+    public int coinChange(int[] coins,int amount){
+        int max = amount + 1;
+        int[] dp = new int[amount+1];
+        Arrays.fill(dp,max);
+        dp[0] = 0;
+        for (int i = 0; i &lt;= amount; i++) {
+            for(int j = 0;j&lt;coins.length;j++){
+                if(coins[j]&lt;=i){
+                    dp[i] = Math.min(dp[i],dp[i-coins[j]]+1);
+                }
+            }
+        }
+        return dp[amount] &gt; amount? -1:dp[amount];
+    }
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2">1.零钱兑换</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
